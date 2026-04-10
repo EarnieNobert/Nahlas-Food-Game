@@ -1,0 +1,1194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Snack Quest: Nahla’s Hero Missions</title>
+  <style>
+    :root{
+      --bg:#0b0b18;
+      --panel:#12122a;
+      --panel2:#171736;
+      --text:#f3f3ff;
+      --muted:#b8b8d6;
+      --accent:#7cf7d4;
+      --accent2:#ff7ad9;
+      --warn:#ffd36e;
+      --good:#87ff8a;
+      --bad:#ff7a7a;
+      --shadow: rgba(0,0,0,.35);
+      --radius: 18px;
+      --font: ui-rounded, system-ui, -apple-system, "SF Pro Rounded", "SF Pro Display", Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 900px at 20% 10%, rgba(255,122,217,.18), transparent 60%),
+        radial-gradient(1000px 700px at 80% 20%, rgba(124,247,212,.14), transparent 55%),
+        radial-gradient(900px 700px at 50% 90%, rgba(255,211,110,.10), transparent 60%),
+        linear-gradient(180deg, #070714, var(--bg));
+      min-height:100vh;
+      padding: 18px;
+      display:flex;
+      justify-content:center;
+    }
+    .app{
+      width:min(1020px, 100%);
+      display:grid;
+      gap:14px;
+      grid-template-columns: 1.35fr .65fr;
+    }
+    @media (max-width: 860px){
+      .app{grid-template-columns: 1fr; }
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      box-shadow: 0 16px 40px var(--shadow);
+      overflow:hidden;
+    }
+    .header{
+      padding: 16px 16px 10px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .title h1{
+      margin:0;
+      font-size: 18px;
+      letter-spacing:.2px;
+      line-height:1.1;
+    }
+    .title .sub{
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .pill{
+      font-size:12px;
+      padding:8px 10px;
+      border-radius:999px;
+      background: rgba(124,247,212,.12);
+      border: 1px solid rgba(124,247,212,.25);
+      color: var(--accent);
+      user-select:none;
+      white-space:nowrap;
+    }
+    .main{ padding: 0 16px 16px; display:grid; gap:12px; }
+    .scene{
+      background: rgba(0,0,0,.18);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+    .sceneTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .chapter{ font-size:13px; color: var(--muted); }
+    .sceneTitle{ font-size: 16px; margin:0; line-height:1.2; }
+    .story{
+      margin: 10px 0 0;
+      color: #f0f0ff;
+      line-height:1.45;
+      font-size: 15px;
+      white-space: pre-wrap;
+    }
+    .progressBox{
+      display:grid;
+      gap:10px;
+      padding: 12px;
+      border-radius: var(--radius);
+      background: rgba(18,18,42,.65);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .label{ font-size: 13px; color: var(--muted); }
+    .big{ font-size: 18px; letter-spacing:.2px; }
+    .bar{
+      width:100%;
+      height: 12px;
+      background: rgba(255,255,255,.08);
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .fill{
+      height:100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent2), var(--accent));
+      transition: width .25s ease;
+    }
+    .btnRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 520px){
+      .btnRow{grid-template-columns:1fr;}
+    }
+    button{
+      border:0;
+      border-radius: 16px;
+      padding: 14px 14px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing:.2px;
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 10px 20px rgba(0,0,0,.25);
+      transition: transform .06s ease, filter .15s ease, background .15s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button:active{ transform: translateY(1px) scale(.99); }
+    .primary{
+      background: linear-gradient(90deg, rgba(255,122,217,.35), rgba(124,247,212,.28));
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    .secondary{ background: rgba(255,255,255,.06); }
+    .danger{
+      background: rgba(255,122,122,.10);
+      border:1px solid rgba(255,122,122,.22);
+    }
+    .disabled{ opacity:.55; filter: grayscale(.1); pointer-events:none; }
+
+    .side{ display:grid; gap:14px; align-content:start; }
+    .stats{ padding: 14px; display:grid; gap:10px; }
+    .statGrid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .mini{
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .mini .k{ font-size:12px; color:var(--muted); }
+    .mini .v{ font-size:18px; margin-top:6px; }
+    .badge{
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px dashed rgba(124,247,212,.35);
+      background: rgba(124,247,212,.08);
+      color: #dffef6;
+      line-height:1.35;
+    }
+    .confetti{
+      display:none;
+      font-size: 16px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      animation: pop .28s ease;
+    }
+    @keyframes pop{
+      from{ transform: translateY(6px); opacity:0;}
+      to{ transform: translateY(0); opacity:1;}
+    }
+
+    /* Dashboard */
+    .dashGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 520px){
+      .dashGrid{grid-template-columns:1fr;}
+    }
+    .pack{
+      padding: 12px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.08);
+      display:grid;
+      gap:8px;
+      cursor:pointer;
+      transition: transform .08s ease, background .15s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pack:active{ transform: translateY(1px) scale(.99); }
+    .pack h3{ margin:0; font-size:15px; line-height:1.2; }
+    .pack .meta{ font-size:12px; color:var(--muted); display:flex; gap:10px; flex-wrap:wrap; }
+    .pack .desc{ font-size:13px; color:#e9e9ff; line-height:1.35; }
+    .pack .tag{
+      font-size:12px;
+      padding:6px 8px;
+      border-radius:999px;
+      display:inline-block;
+      background: rgba(255,211,110,.10);
+      border:1px solid rgba(255,211,110,.22);
+      color: var(--warn);
+      width: fit-content;
+    }
+
+    /* Modal */
+    .modalWrap{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:9999;
+    }
+    .modal{
+      width:min(620px, 100%);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: 0 20px 60px rgba(0,0,0,.5);
+      overflow:hidden;
+    }
+    .modalHead{
+      padding: 14px 16px 10px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+    }
+    .modalHead h2{margin:0;font-size:16px;}
+    .modalBody{
+      padding: 0 16px 16px;
+      display:grid;
+      gap:12px;
+      color: var(--text);
+      line-height:1.35;
+    }
+    .modalActions{
+      display:flex;
+      gap:10px;
+      padding: 0 16px 16px;
+      flex-wrap:wrap;
+    }
+    .modalActions button{flex:1; min-width: 160px;}
+    .inputRow{ display:grid; gap:6px; }
+    input, select{
+      width:100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      color: var(--text);
+      font-size: 15px;
+      outline:none;
+    }
+    small{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- LEFT -->
+    <div class="card">
+      <div class="header" id="secretParentTap">
+        <div class="title">
+          <h1>Snack Quest: Nahla’s Hero Missions</h1>
+          <div class="sub">Story continues only when Nahla takes bites + stays seated.</div>
+        </div>
+        <div class="pill" id="modePill">Kid Mode</div>
+      </div>
+
+      <div class="main">
+        <!-- Dashboard -->
+        <div class="scene" id="dashboard">
+          <div class="sceneTop">
+            <div>
+              <div class="chapter">Choose a Story Pack</div>
+              <p class="sceneTitle">Pick Nahla’s mission</p>
+            </div>
+            <div class="pill" id="dashPill">Tap a pack</div>
+          </div>
+          <div class="dashGrid" id="packGrid"></div>
+        </div>
+
+        <!-- Story Scene -->
+        <div class="scene" id="storyScene" style="display:none;">
+          <div class="sceneTop">
+            <div>
+              <div class="chapter" id="chapterLine">Chapter</div>
+              <p class="sceneTitle" id="sceneTitle">Loading…</p>
+            </div>
+            <div class="pill" id="missionPill">Mission</div>
+          </div>
+          <div class="story" id="storyText"></div>
+        </div>
+
+        <div class="progressBox" id="controls" style="display:none;">
+          <div class="row">
+            <div>
+              <div class="label">Bites taken (this chapter)</div>
+              <div class="big"><span id="bitesNow">0</span> / <span id="bitesNeed">0</span></div>
+            </div>
+            <div>
+              <div class="label">Seat streak</div>
+              <div class="big">⭐ <span id="seatStreak">0</span></div>
+            </div>
+          </div>
+
+          <div class="bar"><div class="fill" id="fill"></div></div>
+
+          <div class="btnRow">
+            <button class="primary" id="biteBtn">🍴 Nahla took a bite!</button>
+            <button class="secondary" id="readBtn">🔊 Read aloud</button>
+          </div>
+
+          <div class="btnRow">
+            <button class="secondary" id="nextBtn">➡️ Continue story</button>
+            <button class="secondary" id="backBtn">🏠 Story dashboard</button>
+          </div>
+
+          <button class="danger" id="resetBtn">Reset this story</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="side">
+      <div class="card stats">
+        <div class="row">
+          <div class="title">
+            <h1 style="font-size:16px;margin:0;">Hero Dashboard</h1>
+            <div class="sub">Rewards + progress</div>
+          </div>
+          <div class="pill" id="heroName">Hero: Nahla</div>
+        </div>
+
+        <div class="statGrid">
+          <div class="mini">
+            <div class="k">Story pack</div>
+            <div class="v" id="packName">—</div>
+          </div>
+          <div class="mini">
+            <div class="k">Chapters cleared</div>
+            <div class="v" id="chaptersCleared">0</div>
+          </div>
+          <div class="mini">
+            <div class="k">Total bites</div>
+            <div class="v" id="totalBites">0</div>
+          </div>
+          <div class="mini">
+            <div class="k">Power level</div>
+            <div class="v">⚡ <span id="powerLevel">1</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card stats">
+        <div class="badge" id="badgeBox">🛡️ Nahla Badge: “Calm hero focus wins!”</div>
+        <div class="confetti" id="confettiBox">✨ POWER UP! ✨</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modalWrap" id="modalWrap">
+    <div class="modal">
+      <div class="modalHead">
+        <h2 id="modalTitle">Settings</h2>
+        <div class="pill" id="modalPill">Quick</div>
+      </div>
+      <div class="modalBody" id="modalBody"></div>
+      <div class="modalActions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <script>
+    // ---------------- Story Packs (Superhero only; no food type/time references) ----------------
+    const HERO = "Nahla";
+
+    function pack(chapters){
+      return chapters.map((c, i) => ({
+        title: c.title || `Chapter ${i+1}`,
+        text: (c.text || "").replaceAll("{HERO}", HERO),
+        bitesRequired: Number.isFinite(c.bitesRequired) ? c.bitesRequired : 7,
+        reward: c.reward || "Hero Spark"
+      }));
+    }
+
+    const STORY_PACKS = {
+      skyline: {
+        id: "skyline",
+        name: "Skyline Shield Squad",
+        tag: "City Rescue",
+        desc: "Fast missions, rooftop chases, and a city-wide shield generator.",
+        chapters: pack([
+          { title:"Activation: Shield Core Online", bitesRequired: 6, reward:"Shield Spark",
+            text:
+`ALERT: The Skyline Shield is fading!
+{HERO} is the only hero who can recharge it.
+
+Mission rules:
+✅ Stay seated like a hero in command.
+✅ Each bite charges the core.
+
+When the core reaches full charge, the next scene unlocks.` },
+          { title:"Rooftop Signal Chase", bitesRequired: 8, reward:"Rooftop Badge",
+            text:
+`A villain scrambles the city’s signal towers.
+{HERO} steadies her breathing. Calm focus is hero power.
+
+Each bite sends a pulse to the nearest tower.
+Stay seated to keep the signal stable.` },
+          { title:"Tunnel of Echoes", bitesRequired: 7, reward:"Echo Charm",
+            text:
+`The villain hides in a tunnel that repeats distractions—giggles, wiggles, and “get up!” tricks.
+{HERO} counters with the Focus Move: sit still, bite by bite.
+
+Keep going. You’re building unstoppable hero momentum.` },
+          { title:"Shield Surge Finale", bitesRequired: 9, reward:"Victory Star",
+            text:
+`FINAL PUSH! The Skyline Shield needs one last surge.
+{HERO} locks in: seated, steady, brave.
+
+When you finish this chapter… the city lights return.` },
+          { title:"City Lights Restored", bitesRequired: 5, reward:"Golden Hero Cheer",
+            text:
+`The Skyline Shield snaps back into place—bright and safe.
+Crowds cheer for {HERO}.
+
+Hero lesson:
+Small bites + staying seated = big power.` }
+        ])
+      },
+
+      titan: {
+        id: "titan",
+        name: "Titan Tech Headquarters",
+        tag: "Super Lab",
+        desc: "A high-tech base, heroic gadgets, and a sneaky sabotage plot.",
+        chapters: pack([
+          { title:"HQ Briefing: Operation Focus", bitesRequired: 6, reward:"Gadget Ping",
+            text:
+`Welcome, Agent {HERO}.
+Titan Tech HQ is under quiet sabotage.
+
+Mission protocol:
+✅ Stay seated at the command station.
+✅ Each bite unlocks a security layer.
+
+Protect HQ—one hero step at a time.` },
+          { title:"Laser Grid Calibration", bitesRequired: 8, reward:"Laser Pass",
+            text:
+`A laser grid blocks the hallway.
+{HERO} must calibrate it with perfect timing.
+
+Every bite updates the calibration.
+If you stay seated, your mind stays sharp.` },
+          { title:"Drone Escort", bitesRequired: 7, reward:"Drone Medal",
+            text:
+`Friendly drones carry an energy capsule across the base.
+But distractions try to pull you away.
+
+{HERO} uses the Stay-Seated Stance.
+Each bite keeps the drones on course.` },
+          { title:"Saboteur Showdown", bitesRequired: 9, reward:"HQ Crown",
+            text:
+`The saboteur appears—smug, noisy, dramatic.
+They shout: “Stand up! Lose focus!”
+
+{HERO} answers with calm:
+“I stay seated. I finish. I win.”` },
+          { title:"HQ Secured", bitesRequired: 5, reward:"Hero Ceremony",
+            text:
+`Titan Tech HQ is secure again.
+{HERO} earns a ceremony badge for Focus + Bravery.
+
+Ready to choose a new mission?` }
+        ])
+      },
+
+      comet: {
+        id: "comet",
+        name: "Comet Patrol: Sky Guardians",
+        tag: "Sky Mission",
+        desc: "Aerial hero flight, meteor storms, and a skywide rescue.",
+        chapters: pack([
+          { title:"Launch Sequence", bitesRequired: 6, reward:"Launch Spark",
+            text:
+`Comet Patrol needs a hero. {HERO} steps in.
+
+Launch rules:
+✅ Stay seated in pilot position.
+✅ Each bite fuels the flight systems.
+
+Countdown begins now.` },
+          { title:"Meteor Drift", bitesRequired: 8, reward:"Meteor Badge",
+            text:
+`A meteor storm flashes in the distance.
+The ship wobbles when focus wobbles.
+
+{HERO} stays seated and steady.
+Each bite stabilizes the navigation.` },
+          { title:"Skybridge Rescue", bitesRequired: 7, reward:"Rescue Ribbon",
+            text:
+`A skybridge alarm rings.
+{HERO} deploys safety lights—powered by your progress.
+
+Keep it calm.
+Keep it seated.
+Keep moving forward.` },
+          { title:"Guardian Pulse", bitesRequired: 9, reward:"Guardian Star",
+            text:
+`The final Guardian Pulse needs strong energy.
+{HERO} sets her shoulders, takes her time, and finishes.
+
+This is what heroes do.` },
+          { title:"Sky Safe", bitesRequired: 5, reward:"Sky Cheer",
+            text:
+`The sky is safe again.
+Comet Patrol salutes {HERO}—the focus hero.
+
+Choose another mission anytime.` }
+        ])
+      }
+    };
+
+    // ---------------- State ----------------
+    const STORAGE_KEY = "snackQuest_v2";
+    const defaultState = {
+      heroName: HERO,
+      packId: null,
+      chapterIndex: 0,
+      bitesThisChapter: 0,
+      totalBites: 0,
+      chaptersCleared: 0,
+      powerLevel: 1,
+      seatStreak: 0,
+      lastSeatCheck: Date.now(),
+      seatCheckMinutes: 2,
+      ttsAutoRead: false,
+      ttsRate: 0.92,
+      ttsPitch: 1.0,
+      ttsVoiceURI: ""
+    };
+    const state = loadState() || structuredClone(defaultState);
+
+    // ---------------- Elements ----------------
+    const el = {
+      modePill: document.getElementById("modePill"),
+      secretParentTap: document.getElementById("secretParentTap"),
+      dashboard: document.getElementById("dashboard"),
+      packGrid: document.getElementById("packGrid"),
+      storyScene: document.getElementById("storyScene"),
+      controls: document.getElementById("controls"),
+
+      chapterLine: document.getElementById("chapterLine"),
+      sceneTitle: document.getElementById("sceneTitle"),
+      storyText: document.getElementById("storyText"),
+      missionPill: document.getElementById("missionPill"),
+
+      bitesNow: document.getElementById("bitesNow"),
+      bitesNeed: document.getElementById("bitesNeed"),
+      fill: document.getElementById("fill"),
+      seatStreak: document.getElementById("seatStreak"),
+
+      biteBtn: document.getElementById("biteBtn"),
+      readBtn: document.getElementById("readBtn"),
+      nextBtn: document.getElementById("nextBtn"),
+      backBtn: document.getElementById("backBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+
+      heroName: document.getElementById("heroName"),
+      packName: document.getElementById("packName"),
+      chaptersCleared: document.getElementById("chaptersCleared"),
+      totalBites: document.getElementById("totalBites"),
+      powerLevel: document.getElementById("powerLevel"),
+
+      badgeBox: document.getElementById("badgeBox"),
+      confettiBox: document.getElementById("confettiBox"),
+
+      modalWrap: document.getElementById("modalWrap"),
+      modalTitle: document.getElementById("modalTitle"),
+      modalBody: document.getElementById("modalBody"),
+      modalActions: document.getElementById("modalActions"),
+      modalPill: document.getElementById("modalPill"),
+    };
+
+    // ---------------- Dashboard ----------------
+    function renderDashboard(){
+      el.packGrid.innerHTML = "";
+      Object.values(STORY_PACKS).forEach(p => {
+        const card = document.createElement("div");
+        card.className = "pack";
+        card.innerHTML = `
+          <div class="tag">${p.tag}</div>
+          <h3>${escapeHtml(p.name)}</h3>
+          <div class="meta">
+            <span>📘 ${p.chapters.length} chapters</span>
+            <span>🦸 Hero: ${escapeHtml(state.heroName || HERO)}</span>
+          </div>
+          <div class="desc">${escapeHtml(p.desc)}</div>
+        `;
+        card.addEventListener("click", () => selectPack(p.id));
+        el.packGrid.appendChild(card);
+      });
+    }
+
+    function selectPack(packId){
+      state.packId = packId;
+      state.chapterIndex = 0;
+      state.bitesThisChapter = 0;
+      state.seatStreak = 0;
+      state.lastSeatCheck = Date.now();
+      saveState();
+      showGame();
+      render();
+      if(state.ttsAutoRead) speakCurrentChapter();
+    }
+
+    function showDashboard(){
+      stopSpeech();
+      el.dashboard.style.display = "";
+      el.storyScene.style.display = "none";
+      el.controls.style.display = "none";
+      el.packName.textContent = "—";
+      renderDashboard();
+    }
+
+    function showGame(){
+      el.dashboard.style.display = "none";
+      el.storyScene.style.display = "";
+      el.controls.style.display = "";
+    }
+
+    // ---------------- Chapter helpers ----------------
+    function currentPack(){
+      return state.packId ? STORY_PACKS[state.packId] : null;
+    }
+    function currentChapter(){
+      const p = currentPack();
+      if(!p) return null;
+      return p.chapters[state.chapterIndex];
+    }
+
+    // ---------------- Render ----------------
+    function render(){
+      el.heroName.textContent = "Hero: " + (state.heroName || HERO);
+
+      const p = currentPack();
+      if(!p){
+        showDashboard();
+        return;
+      }
+
+      el.packName.textContent = p.name;
+
+      const ch = currentChapter();
+      if(!ch){
+        state.chapterIndex = 0;
+        saveState();
+        return render();
+      }
+
+      el.chapterLine.textContent = `Chapter ${state.chapterIndex + 1} of ${p.chapters.length}`;
+      el.sceneTitle.textContent = ch.title;
+      el.storyText.textContent = ch.text;
+
+      el.bitesNow.textContent = state.bitesThisChapter;
+      el.bitesNeed.textContent = ch.bitesRequired;
+
+      const pct = Math.min(100, Math.round((state.bitesThisChapter / ch.bitesRequired) * 100));
+      el.fill.style.width = pct + "%";
+
+      el.seatStreak.textContent = state.seatStreak;
+      el.chaptersCleared.textContent = state.chaptersCleared;
+      el.totalBites.textContent = state.totalBites;
+      el.powerLevel.textContent = state.powerLevel;
+
+      if(state.bitesThisChapter >= ch.bitesRequired){
+        el.nextBtn.classList.remove("disabled");
+        el.missionPill.textContent = "Mission: Continue!";
+      } else {
+        el.nextBtn.classList.add("disabled");
+        el.missionPill.textContent = "Mission: Take bites + stay seated";
+      }
+
+      saveState();
+    }
+
+    // ---------------- Game actions ----------------
+    function takeBite(){
+      const ch = currentChapter();
+      if(!ch) return;
+
+      state.bitesThisChapter += 1;
+      state.totalBites += 1;
+
+      if(state.totalBites % 5 === 0) state.powerLevel += 1;
+
+      showConfetti(randomFrom([
+        "Power up!",
+        "Shield stronger!",
+        "Hero focus!",
+        "Energy charged!",
+        "Calm and steady!"
+      ]));
+
+      if(state.bitesThisChapter === ch.bitesRequired){
+        setTimeout(() => showConfetti(`Ready! Reward: ${ch.reward}`), 120);
+      }
+      render();
+    }
+
+    function nextChapter(){
+      const p = currentPack();
+      const ch = currentChapter();
+      if(!p || !ch) return;
+      if(state.bitesThisChapter < ch.bitesRequired) return;
+
+      stopSpeech();
+
+      state.chaptersCleared += 1;
+      state.chapterIndex += 1;
+
+      if(state.chapterIndex >= p.chapters.length){
+        toastModal(
+          "Mission Complete!",
+          `${state.heroName || HERO} finished the entire story pack: ${p.name}.\n\nPick another mission pack from the dashboard.`,
+          [
+            {label:"Go to dashboard", kind:"primary", onClick: () => { closeModal(); showDashboard(); }}
+          ],
+          "Victory"
+        );
+        state.chapterIndex = 0;
+        state.bitesThisChapter = 0;
+        saveState();
+        render();
+        return;
+      }
+
+      state.bitesThisChapter = 0;
+      saveState();
+      render();
+
+      if(state.ttsAutoRead) speakCurrentChapter();
+    }
+
+    function resetStory(){
+      toastModal(
+        "Reset this story pack?",
+        "This restarts chapters and bite progress for the current story pack.",
+        [
+          {label:"Cancel", kind:"secondary", onClick: closeModal},
+          {label:"Reset", kind:"danger", onClick: () => {
+            stopSpeech();
+            state.chapterIndex = 0;
+            state.bitesThisChapter = 0;
+            state.seatStreak = 0;
+            state.lastSeatCheck = Date.now();
+            saveState();
+            closeModal();
+            render();
+            if(state.ttsAutoRead) speakCurrentChapter();
+          }}
+        ],
+        "Confirm"
+      );
+    }
+
+    // ---------------- Seat check-in ----------------
+    function seatCheckLoop(){
+      const now = Date.now();
+      const mins = state.seatCheckMinutes || 2;
+      const due = (now - state.lastSeatCheck) > (mins * 60 * 1000);
+
+      if(due && currentPack()){
+        state.lastSeatCheck = now;
+        saveState();
+
+        toastModal(
+          "Seat Check",
+          "Is Nahla still sitting in her seat?",
+          [
+            {label:"Yes, still seated!", kind:"primary", onClick: () => {
+              state.seatStreak += 1;
+              if(state.seatStreak % 2 === 0) state.powerLevel += 1;
+              closeModal();
+              showConfetti("Seat streak +1!");
+              render();
+            }},
+            {label:"No (stood up)", kind:"danger", onClick: () => {
+              state.seatStreak = 0;
+              closeModal();
+              toastModal(
+                "All good!",
+                "Let’s sit back down. When you’re ready, press OK and continue.",
+                [{label:"OK", kind:"primary", onClick: closeModal}],
+                "Reset"
+              );
+              render();
+            }}
+          ],
+          "Focus"
+        );
+      }
+
+      setTimeout(seatCheckLoop, 2500);
+    }
+
+    // ---------- Clean text before speaking ----------
+    function cleanForTTS(text){
+      if(!text) return "";
+      return String(text)
+        // remove emojis/symbols that TTS reads awkwardly (e.g., "white check mark")
+        .replace(/[✅⭐⚡🛡️🦸✨📡🏆]/g, "")
+        // turn line breaks into pauses
+        .replace(/\n+/g, ". ")
+        // collapse extra spaces
+        .replace(/\s{2,}/g, " ")
+        .trim();
+    }
+
+    // ---------------- TTS (Speak to Text) ----------------
+    function canSpeak(){
+      return ("speechSynthesis" in window) && ("SpeechSynthesisUtterance" in window);
+    }
+
+    function getVoices(){
+      return window.speechSynthesis.getVoices() || [];
+    }
+
+    function pickNiceDefaultVoice(){
+      const voices = getVoices();
+      // Prefer more natural-sounding voices if present (varies by system)
+      const preferred =
+        voices.find(v => /natural|enhanced|neural|aria|zira|susan/i.test(v.name))
+        || voices.find(v => /en/i.test(v.lang))
+        || voices[0];
+
+      return preferred ? preferred.voiceURI : "";
+    }
+
+    function speak(text){
+      if(!canSpeak()) return;
+
+      window.speechSynthesis.cancel();
+
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = state.ttsRate ?? 0.92;
+      u.pitch = state.ttsPitch ?? 1.0;
+
+      // Voice selection
+      const voices = getVoices();
+      let uri = state.ttsVoiceURI;
+
+      if(!uri){
+        uri = pickNiceDefaultVoice();
+        state.ttsVoiceURI = uri || "";
+        saveState();
+      }
+
+      const v = voices.find(v => v.voiceURI === uri);
+      if(v) u.voice = v;
+
+      u.onstart = () => showConfetti("Reading…");
+      u.onerror = () => {};
+      u.onend = () => {};
+
+      window.speechSynthesis.speak(u);
+    }
+
+    function stopSpeech(){
+      if(canSpeak()) window.speechSynthesis.cancel();
+    }
+
+    function speakCurrentChapter(){
+      const ch = currentChapter();
+      if(!ch) return;
+      const cleanText = cleanForTTS(`${ch.title}. ${ch.text}`);
+      speak(cleanText);
+    }
+
+    // ---------------- Parent Mode ----------------
+    let parentMode = false;
+    let pressTimer = null;
+
+    function openParentMode(){
+      parentMode = true;
+      el.modePill.textContent = "Parent Mode";
+      el.modePill.style.background = "rgba(255,211,110,.12)";
+      el.modePill.style.borderColor = "rgba(255,211,110,.28)";
+      el.modePill.style.color = "var(--warn)";
+
+      const ch = currentChapter();
+      const packObj = currentPack();
+
+      const body = document.createElement("div");
+      body.innerHTML = `
+        <div class="inputRow">
+          <label class="label">Hero name</label>
+          <input id="heroInput" value="${escapeHtml(state.heroName || HERO)}" />
+        </div>
+
+        <div class="inputRow">
+          <label class="label">Seat check frequency</label>
+          <select id="seatSelect">
+            ${[1,2,3,4,5].map(m => `<option value="${m}" ${m===state.seatCheckMinutes?"selected":""}>Every ${m} minute${m>1?"s":""}</option>`).join("")}
+          </select>
+        </div>
+
+        <div class="inputRow">
+          <label class="label">Auto-read each chapter</label>
+          <select id="autoReadSelect">
+            <option value="false" ${!state.ttsAutoRead ? "selected":""}>Off</option>
+            <option value="true" ${state.ttsAutoRead ? "selected":""}>On</option>
+          </select>
+        </div>
+
+        <div class="inputRow">
+          <label class="label">Read speed</label>
+          <select id="rateSelect">
+            ${[
+              {v:0.85, t:"Slow"},
+              {v:0.92, t:"Normal"},
+              {v:1.00, t:"Fast"}
+            ].map(o => `<option value="${o.v}" ${(state.ttsRate===o.v)?"selected":""}>${o.t}</option>`).join("")}
+          </select>
+        </div>
+
+        <div class="inputRow">
+          <label class="label">Voice</label>
+          <select id="voiceSelect"></select>
+          <small>Voices come from your device. Install more Windows voices for better quality.</small>
+        </div>
+
+        ${packObj && ch ? `
+        <div class="inputRow">
+          <label class="label">Bites required (this chapter)</label>
+          <input id="bitesInput" type="number" min="1" max="30" value="${ch.bitesRequired}" />
+        </div>
+        ` : ""}
+
+        <div class="inputRow">
+          <label class="label">Stop voice</label>
+          <button id="stopVoiceBtn" class="secondary" type="button">Stop reading</button>
+        </div>
+      `;
+
+      toastModal(
+        "Parent Mode",
+        body,
+        [
+          {label:"Done", kind:"primary", onClick: () => {
+            const hero = document.getElementById("heroInput")?.value?.trim();
+            const seatM = parseInt(document.getElementById("seatSelect")?.value, 10);
+            const autoR = document.getElementById("autoReadSelect")?.value === "true";
+            const rate = parseFloat(document.getElementById("rateSelect")?.value);
+            const voiceUri = document.getElementById("voiceSelect")?.value;
+
+            if(hero) state.heroName = hero;
+            if(Number.isFinite(seatM) && seatM>=1 && seatM<=5) state.seatCheckMinutes = seatM;
+            state.ttsAutoRead = autoR;
+            if(Number.isFinite(rate)) state.ttsRate = rate;
+            if(voiceUri) state.ttsVoiceURI = voiceUri;
+
+            const bites = parseInt(document.getElementById("bitesInput")?.value, 10);
+            const packObj2 = currentPack();
+            if(packObj2){
+              const ch2 = currentChapter();
+              if(ch2 && Number.isFinite(bites) && bites>=1 && bites<=30){
+                ch2.bitesRequired = bites;
+                state.bitesThisChapter = Math.min(state.bitesThisChapter, bites);
+              }
+            }
+
+            parentMode = false;
+            el.modePill.textContent = "Kid Mode";
+            el.modePill.style.background = "rgba(124,247,212,.12)";
+            el.modePill.style.borderColor = "rgba(124,247,212,.25)";
+            el.modePill.style.color = "var(--accent)";
+
+            saveState();
+            closeModal();
+            render();
+          }}
+        ],
+        "Settings"
+      );
+
+      // Populate voice list after modal mounts
+      setTimeout(() => {
+        const btn = document.getElementById("stopVoiceBtn");
+        if(btn) btn.addEventListener("click", stopSpeech);
+
+        const vs = document.getElementById("voiceSelect");
+        if(vs && canSpeak()){
+          const voices = getVoices();
+
+          // If voices haven't loaded yet, attempt a default
+          if(!state.ttsVoiceURI){
+            state.ttsVoiceURI = pickNiceDefaultVoice();
+            saveState();
+          }
+
+          vs.innerHTML = voices.map(v =>
+            `<option value="${v.voiceURI}" ${v.voiceURI === state.ttsVoiceURI ? "selected" : ""}>
+              ${escapeHtml(v.name)} (${escapeHtml(v.lang)})
+            </option>`
+          ).join("");
+
+          vs.addEventListener("change", () => {
+            state.ttsVoiceURI = vs.value;
+            saveState();
+            stopSpeech();
+            speak(cleanForTTS("Voice selected. Hero mission ready."));
+          });
+        }
+      }, 0);
+    }
+
+    // ---------------- Modal helpers ----------------
+    function toastModal(title, body, actions, pill=""){
+      el.modalTitle.textContent = title;
+      el.modalPill.textContent = pill || "Quick";
+      el.modalBody.innerHTML = "";
+
+      if(typeof body === "string"){
+        const p = document.createElement("div");
+        p.style.whiteSpace = "pre-wrap";
+        p.textContent = body;
+        el.modalBody.appendChild(p);
+      } else {
+        el.modalBody.appendChild(body);
+      }
+
+      el.modalActions.innerHTML = "";
+      actions.forEach(a => {
+        const b = document.createElement("button");
+        b.textContent = a.label;
+        b.className =
+          a.kind === "primary" ? "primary" :
+          a.kind === "danger" ? "danger" : "secondary";
+        b.onclick = a.onClick;
+        el.modalActions.appendChild(b);
+      });
+
+      el.modalWrap.style.display = "flex";
+    }
+
+    function closeModal(){
+      el.modalWrap.style.display = "none";
+      el.modalBody.innerHTML = "";
+      el.modalActions.innerHTML = "";
+    }
+
+    function showConfetti(text){
+      el.confettiBox.textContent = text;
+      el.confettiBox.style.display = "block";
+      setTimeout(()=>{ el.confettiBox.style.display = "none"; }, 1100);
+
+      el.badgeBox.textContent = randomFrom([
+        "Nahla Badge: Calm hero focus wins!",
+        "Nahla Badge: Power builds one bite at a time!",
+        "Nahla Badge: Staying seated is hero training!",
+        "Nahla Badge: Finish strong. Finish proud.",
+        "Nahla Badge: Steady and brave!"
+      ]);
+    }
+
+    function randomFrom(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+    // ---------------- Storage ----------------
+    function saveState(){
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+    }
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return null;
+        const parsed = JSON.parse(raw);
+        if(!parsed) return null;
+
+        const merged = {...structuredClone(defaultState), ...parsed};
+
+        if(merged.packId && !STORY_PACKS[merged.packId]) merged.packId = null;
+
+        if(merged.packId){
+          const p = STORY_PACKS[merged.packId];
+          if(!Number.isFinite(merged.chapterIndex) || merged.chapterIndex<0 || merged.chapterIndex>=p.chapters.length){
+            merged.chapterIndex = 0;
+          }
+        } else {
+          merged.chapterIndex = 0;
+        }
+
+        if(!Number.isFinite(merged.bitesThisChapter) || merged.bitesThisChapter<0) merged.bitesThisChapter = 0;
+        if(!Number.isFinite(merged.totalBites) || merged.totalBites<0) merged.totalBites = 0;
+        if(!Number.isFinite(merged.chaptersCleared) || merged.chaptersCleared<0) merged.chaptersCleared = 0;
+        if(!Number.isFinite(merged.powerLevel) || merged.powerLevel<1) merged.powerLevel = 1;
+
+        return merged;
+      } catch(e){
+        return null;
+      }
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>"']/g, s => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[s]));
+    }
+
+    // ---------------- Events ----------------
+    el.biteBtn.addEventListener("click", () => takeBite());
+    el.readBtn.addEventListener("click", () => speakCurrentChapter());
+    el.nextBtn.addEventListener("click", () => nextChapter());
+    el.backBtn.addEventListener("click", () => { showDashboard(); renderDashboard(); });
+    el.resetBtn.addEventListener("click", resetStory);
+
+    // Long-press / hold header to open Parent Mode (touch + mouse)
+    el.secretParentTap.addEventListener("touchstart", () => { pressTimer = setTimeout(openParentMode, 750); }, {passive:true});
+    el.secretParentTap.addEventListener("touchend", () => clearTimeout(pressTimer));
+    el.secretParentTap.addEventListener("touchcancel", () => clearTimeout(pressTimer));
+    el.secretParentTap.addEventListener("mousedown", () => { pressTimer = setTimeout(openParentMode, 750); });
+    el.secretParentTap.addEventListener("mouseup", () => clearTimeout(pressTimer));
+    el.secretParentTap.addEventListener("mouseleave", () => clearTimeout(pressTimer));
+
+    el.modalWrap.addEventListener("click", (e) => { if(e.target === el.modalWrap) closeModal(); });
+
+    // Ensure voices load (Windows/browser quirk)
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        if(!state.ttsVoiceURI){
+          state.ttsVoiceURI = pickNiceDefaultVoice();
+          saveState();
+        }
+      };
+    }
+
+    // ---------------- Boot ----------------
+    renderDashboard();
+
+    if(state.packId){
+      showGame();
+    } else {
+      showDashboard();
+    }
+
+    render();
+    seatCheckLoop();
+  </script>
+</body>
+</html>
+
+
